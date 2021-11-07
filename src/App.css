@@ -4,10 +4,12 @@
   padding: 5 10px;
   margin: 30px auto;
 }
-.aluno-container header {
+.aluno-container .header {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 }
+
 .aluno-container header button {
   width: 200px;
   height: 50px;

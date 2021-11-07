@@ -9,9 +9,12 @@ function App() {
   const baseUrl = "https://localhost:44319/api/alunos";
 
   const [data, setData] = useState([]);
+  const [updateData, setUpdateData] = useState(true);
 
   const [modalIncluir, setModalIncluir] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState(false);
+  
 
   const [alunoSelecionado, setAlunoSelecionado] = useState({
     id: '',
@@ -22,7 +25,7 @@ function App() {
 
   const selecionarAluno = (aluno , opcao) => {
     setAlunoSelecionado(aluno);
-    (opcao === "Editar") && abrirFecharModalEditar();
+    (opcao === "Editar") ? abrirFecharModalEditar() : abrirFecharModalExcluir();
   }
 
   const abrirFecharModalIncluir = () => {
@@ -30,6 +33,9 @@ function App() {
   }
   const abrirFecharModalEditar = () => {
     setModalEditar(!modalEditar)
+  }
+  const abrirFecharModalExcluir = () => {
+    setModalExcluir(!modalExcluir)
   }
 
   const handleChange = e => {
@@ -55,6 +61,7 @@ function App() {
     await axios.post(baseUrl, alunoSelecionado)
       .then(response => {
         setData(data.concat(response.data));
+        setUpdateData(true);
         abrirFecharModalIncluir();
       }).catch(error => {
         console.log(error);
@@ -67,31 +74,48 @@ function App() {
       .then(response => {
         var resposta = response.data;
         var dadosAuxiliares = data;
-        dadosAuxiliares.map(aluno => {
+        dadosAuxiliares.forEach(aluno => {
           if(aluno.id === alunoSelecionado.id){
             aluno.nome = resposta.nome;
             aluno.email = resposta.email;
             aluno.idade = resposta.idade;
           }
         });
+        setUpdateData(true);
         abrirFecharModalEditar();
       }).catch(error => {
         console.log(error);
       })
   }
 
+  const pedidoDelete = async () => {
+    await axios.delete(baseUrl + "/" + alunoSelecionado.id)
+      .then(response => {
+        setData(data.filter(aluno => aluno.id !== response.data));
+        setUpdateData(true);
+        abrirFecharModalExcluir();
+      }).catch(error => {
+        console.log(error);
+      })
+  }
+
   useEffect(() => {
-    pedidoGet();
-  })
+    if(updateData) {
+      pedidoGet();
+      setUpdateData(false);
+    }
+  }, [updateData])
 
   return (
-    <div className="App">
-      <br />
-      <h3>Cadastro de alunos</h3>
-      <header>
-        <button className='btn btn-success' onClick={() => abrirFecharModalIncluir()}>Novo Aluno</button>
-      </header>
-      <table>
+    <div className="aluno-container">
+      <div className="header">
+        <br />
+        <h3>Cadastro de alunos</h3>
+        <header>
+          <button className='btn btn-success' onClick={() => abrirFecharModalIncluir()}>Novo Aluno</button>
+        </header>
+      </div>
+      <table className="table table-bordered">
         <thead>
           <tr>
             <th>Id</th>
@@ -171,6 +195,16 @@ function App() {
         <ModalFooter>
           <button className="btn btn-primary" onClick={() => pedidoPut()}>Editar</button> {"  "}
           <button className="btn btn-danger" onClick={() => abrirFecharModalEditar()}>Cancelar</button>
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={modalExcluir} >
+        <ModalBody>
+          Confirmar a exclusão deste(a) aluno(a) : {alunoSelecionado && alunoSelecionado.nome} ?
+        </ModalBody>
+        <ModalFooter>
+          <button className="btn btn-danger" onClick={() => pedidoDelete()}>Sim</button> {"  "}
+          <button className="btn btn-primary" onClick={() => abrirFecharModalExcluir()}>Cancelar</button> 
         </ModalFooter>
       </Modal>
     </div>

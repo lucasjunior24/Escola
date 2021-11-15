@@ -7,7 +7,7 @@ export default function Alunos() {
         <div className='aluno-container'>
             <header>
                 <span>Bem Vindo, <strong>Lucas</strong>!</span>
-                <Link to="novo/0" className='button button-green'>Novo Aluno</Link>
+                <Link to="aluno/novo/0" className='button button-green'>Novo Aluno</Link>
                 <button type='button'>
                     <FiXCircle size={35} color="#17202a" />
                 </button>

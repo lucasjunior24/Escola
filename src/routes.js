@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Alunos from './pages/Alunos/Index';
 
 import Login from './pages/Login/Login';
@@ -8,11 +8,11 @@ import NovoAluno from './pages/NovoAluno/Index';
 export default function Router() {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" exact element={<Login />} />
-                <Route path="/alunos" element={<Alunos />}/>
-                <Route path="/alunos/novo/:alunoId" element={<NovoAluno />}/>
-            </Routes>
+            <Switch>
+                <Route path="/" exact component={Login} />
+                <Route path="/alunos" component={Alunos}/>
+                <Route path="/aluno/novo/:alunoId" component={NovoAluno}/>
+            </Switch>
         </BrowserRouter>
     );
 }

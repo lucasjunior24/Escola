@@ -20,7 +20,7 @@ export default function NovoAluno() {
                     <input placeholder='Email' />
                     <input placeholder='Idade' />
                     <button className='button button-green' type='submit'>
-                        {alunoId === '0' ? 'Incluir Novo Aluno' : 'Atualizar Aluno'}
+                        {alunoId === '0' ? 'Incluir' : 'Atualizar'}
                     </button>
                 </form>
             </div>

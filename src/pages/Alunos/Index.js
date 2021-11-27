@@ -1,14 +1,50 @@
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { FiEdit, FiUserX, FiXCircle } from 'react-icons/fi';
 import './Styles.css';
 
+import api from '../../services/api';
+
 export default function Alunos() {
+    // const [nome, SetNome] = useState('');
+    const [alunos, SetAlunos] = useState([]);
+
+    // const email = localStorage.getItem('email');
+    const token = localStorage.getItem('token');
+
+    const history = useHistory();
+
+    const authorization = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    useEffect(() => {
+        api.get('api/alunos', authorization)
+            .then(response => {
+                SetAlunos(response.data);
+            }, token);
+    });
+
+    async function logout() {
+        try {
+            localStorage.clear();
+            localStorage.setItem('token', '');
+            authorization.headers = '';
+            history.push('/');
+        } 
+        catch(erro) {
+            alert("Não foi possivel fazer logout: ", erro);
+        }
+    }
+
     return (
         <div className='aluno-container'>
             <header>
                 <span>Bem Vindo, <strong>Lucas</strong>!</span>
                 <Link to="aluno/novo/0" className='button button-green'>Novo Aluno</Link>
-                <button type='button'>
+                <button onClick={logout} type='button'>
                     <FiXCircle size={35} color="#17202a" />
                 </button>
             </header>
@@ -20,29 +56,19 @@ export default function Alunos() {
             </form>
             <h1>Relação de alunos</h1>
             <ul>
-                <li>
-                    <b>Nome: </b>Paulo<br /><br />
-                    <b>Email: </b>Paulo<br /><br />
-                    <b>Idade: </b>Paulo<br /><br />
-                    <button type='button'>
-                        <FiEdit size='25' color="#17202a" />
-                    </button>
-                    <button type='button'>
-                        <FiUserX size='25' color="#17202a" />
-                    </button>
-                </li>
-
-                <li>
-                    <b>Nome: </b>Paulo<br /><br />
-                    <b>Email: </b>Paulo<br /><br />
-                    <b>Idade: </b>Paulo<br /><br />
-                    <button type='button'>
-                        <FiEdit size='25' color="#17202a" />
-                    </button>
-                    <button type='button'>
-                        <FiUserX size='25' color="#17202a" />
-                    </button>
-                </li>
+                {alunos.map(aluno => (
+                    <li key={aluno.id}>
+                        <b>Nome: </b>{aluno.nome}<br /><br />
+                        <b>Email: </b>{aluno.email}<br /><br />
+                        <b>Idade: </b>{aluno.idade}<br /><br />
+                        <button type='button'>
+                            <FiEdit size='25' color="#17202a" />
+                        </button>
+                        <button type='button'>
+                            <FiUserX size='25' color="#17202a" />
+                        </button>
+                    </li>
+                ))}
             </ul>
         </div>
     );

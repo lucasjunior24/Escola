@@ -6,13 +6,29 @@ import './Styles.css';
 import api from '../../services/api';
 
 export default function Alunos() {
-    // const [nome, SetNome] = useState('');
+    const [searchInput, SetSearchInput] = useState('');
+    const [filtro, SetFiltro] = useState([]);
+
     const [alunos, SetAlunos] = useState([]);
 
     // const email = localStorage.getItem('email');
     const token = localStorage.getItem('token');
 
     const history = useHistory();
+
+    const searchAlunos = (searchValue) => {
+        SetSearchInput(searchValue);
+        if(SetSearchInput !== '') {
+            const dadosFiltrados = alunos.filter((item) => {
+                return Object.values(item)
+                    .join('').toLowerCase()
+                    .includes(searchInput.toLowerCase());
+            });
+            SetFiltro(dadosFiltrados);
+        } else {
+            SetFiltro(alunos);
+        }
+    }
 
     const authorization = {
         headers: {
@@ -57,27 +73,44 @@ export default function Alunos() {
                 </button>
             </header>
             <form>
-                <input type='text' placeholder='Nome' />
-                <button type='button' className='button button-green'>
-                    Filtro
-                </button>
+                <input type='text' 
+                    placeholder='Nome'
+                    onChange={(e) => searchAlunos(e.target.value)} />
             </form>
             <h1>Relação de alunos</h1>
-            <ul>
-                {alunos.map(aluno => (
-                    <li key={aluno.id}>
-                        <b>Nome: </b>{aluno.nome}<br /><br />
-                        <b>Email: </b>{aluno.email}<br /><br />
-                        <b>Idade: </b>{aluno.idade}<br /><br />
-                        <button type='button' onClick={() => editluno(aluno.id)}>
-                            <FiEdit size='25' color="#17202a" />
-                        </button>
-                        <button type='button'>
-                            <FiUserX size='25' color="#17202a" />
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            {searchInput.length > 1 ? (
+                <ul>
+                    {filtro.map(aluno => (
+                        <li key={aluno.id}>
+                            <b>Nome: </b>{aluno.nome}<br /><br />
+                            <b>Email: </b>{aluno.email}<br /><br />
+                            <b>Idade: </b>{aluno.idade}<br /><br />
+                            <button type='button' onClick={() => editluno(aluno.id)}>
+                                <FiEdit size='25' color="#17202a" />
+                            </button>
+                            <button type='button'>
+                                <FiUserX size='25' color="#17202a" />
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <ul>
+                    {alunos.map(aluno => (
+                        <li key={aluno.id}>
+                            <b>Nome: </b>{aluno.nome}<br /><br />
+                            <b>Email: </b>{aluno.email}<br /><br />
+                            <b>Idade: </b>{aluno.idade}<br /><br />
+                            <button type='button' onClick={() => editluno(aluno.id)}>
+                                <FiEdit size='25' color="#17202a" />
+                            </button>
+                            <button type='button'>
+                                <FiUserX size='25' color="#17202a" />
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

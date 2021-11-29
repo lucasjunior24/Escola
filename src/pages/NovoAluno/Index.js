@@ -46,7 +46,7 @@ export default function NovoAluno() {
 
     async function saveOrUpdate(event) {
         event.preventDefault();
-        
+
         const data = {
             nome,
             email,
